@@ -1,0 +1,9 @@
+[Unit]
+Description=Check and Start Compontents of Harbor
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/restart-harbor.sh
+
+[Install]
+WantedBy=multi-user.target
