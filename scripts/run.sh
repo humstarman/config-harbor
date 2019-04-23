@@ -4,6 +4,7 @@ FILE=restart-harbor
 BIN=/usr/local/bin/${FILE}.sh
 cat > ${BIN}<<"EOF"
 #!/bin/bash
+restart(){
 COMPONENTS="nginx harbor-ui registry harbor-db harbor-adminserver redis harbor-log"
 for COMPONENT in ${COMPONENTS}; do
   if docker ps --format {{.Names}} | grep $COMPONENT; then
@@ -13,6 +14,11 @@ for COMPONENT in ${COMPONENTS}; do
     docker restart $COMPONENT
   fi
 done
+sleep 3
+}
+restart
+restart
+restart
 EOF
 UNIT=/etc/systemd/system/${FILE}.service
 cat > ${UNIT}<<EOF
@@ -21,7 +27,9 @@ Description=Check and Start Compontents of Harbor
 
 [Service]
 Type=oneshot
-ExecStart=${BIN}
+ExecStart=/bin/sh \
+          -c \
+          "sleep 60 && ${BIN}"
 
 [Install]
 WantedBy=multi-user.target
